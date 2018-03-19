@@ -76,6 +76,7 @@ class JoinForm extends React.PureComponent {
         this.handleChangeNick = this.handleChangeNick.bind(this);
         this.handleChangePassword = this.handleChangePassword.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.doLogin = this.doLogin.bind(this);
     }
 
     handleChangeNick(event) {
@@ -85,11 +86,32 @@ class JoinForm extends React.PureComponent {
     handleChangePassword(event) {
         this.setState({ password: event.target.value });
     }
+    
+    async doLogin () {
+        try {
+            const options = {
+                method: "POST",
+                body: JSON.stringify({ password: this.state.password })
+            }
+            const response = await fetch(`http://${Env.serverAddress}:${Env.serverPort}/lobby-enter`, options)
+            return JSON.parse(response).lobby
+        } catch(e) {
+            console.log(e);
+            return false;
+        }
+    }
 
-    handleSubmit(event) {
-        // TODO: Join a game.
-        alert(`Information was submitted: ${this.state.nick} and ${this.state.password}`);
+    async handleSubmit(event) {
         event.preventDefault();
+        try { 
+            const lobby = await this.doLogin();
+            if(lobby) {
+                this.props.connect(lobby);
+                // TODO if connection succeeded we need to send a SET NICK websocket event
+            }
+        } catch(e) {
+            console.log(e);
+        }
     }
 
     render() {
