@@ -12,6 +12,8 @@ class Communication extends React.PureComponent {
         this.onClose = this.onClose.bind(this);
         this.onMessage = this.onMessage.bind(this);
         this.onError = this.onError.bind(this);
+        this.send = this.send.bind(this);
+        this.disconnect = this.disconnect.bind(this);
     }
 
     connect(lobbyId) {
@@ -30,6 +32,12 @@ class Communication extends React.PureComponent {
         }
     }
 
+    send(action) {
+        if (this.webSocket != null && this.state.isOpen) {
+            this.webSocket.send(JSON.stringify(action));
+        }
+    }
+
     onOpen(event) {
         this.setState({ isOpen: true })
     }
@@ -43,7 +51,7 @@ class Communication extends React.PureComponent {
     }
 
     onMessage(message) {
-        this.setState({ message })
+        this.setState({ message: JSON.parse(message.data) })
     }
 
     render() {
@@ -53,7 +61,9 @@ class Communication extends React.PureComponent {
             message: this.state.message,
             error: this.state.error,
             connect: this.connect,
-            disconnect: this.disconnect
+            disconnect: this.disconnect,
+            isConnected: this.state.isOpen,
+            send: this.send,
         }
 
         const childrenWithProps = React.Children.map(children, child =>
