@@ -30,8 +30,10 @@ export class JoinForm extends React.PureComponent {
                 method: "POST",
                 body: JSON.stringify({ password: this.state.password })
             }
+
             const response = await fetch(`http://${Env.serverAddress}:${Env.serverPort}/lobby-enter`, options)
-            return JSON.parse(response).lobby
+            const body = await response.json();
+            return body.id
         } catch (e) {
             console.log(e);
             return false;
