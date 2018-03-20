@@ -66,22 +66,39 @@ export class JoinForm extends React.PureComponent {
         }
     }
 
+    LoginForm = () => (
+        <form onSubmit={this.handleSubmit}>
+            <label>
+                Nick:
+                <input type="text" value={this.state.nick} onChange={this.handleChangeNick} />
+            </label>
+            <br />
+            <label>
+                Password:
+                <input type="text" value={this.state.password} onChange={this.handleChangePassword} />
+            </label>
+            <br />
+            <input type="submit" value="Join Game" />
+        </form>
+    );
+
+    UserLogged = () => {
+        return <h1>{this.state.nick}</h1>
+    }
+
+    Loading = () => {
+        return <h3>Loading...</h3>
+    }
+
     render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <label>
-                    Nick:
-          <input type="text" value={this.state.nick} onChange={this.handleChangeNick} />
-                </label>
-                <br />
-                <label>
-                    Password:
-          <input type="text" value={this.state.password} onChange={this.handleChangePassword} />
-                </label>
-                <br />
-                <input type="submit" value="Join Game" />
-            </form>
-        );
+        switch(this.state.nickSet) {
+            case 1:
+                return <this.Loading/>
+            case 2:
+                return <this.UserLogged/>
+            default:
+                return <this.LoginForm/>
+        }
     }
 }
 
