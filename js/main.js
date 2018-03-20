@@ -3,13 +3,72 @@ const Env = {
     serverPort: "80"
 }
 
-class Communication {
-    constructor(){
-        this.ws = WebSocket(`ws://${Env.serverAddress}:${Env.serverPort}`)
+class Communication extends React.PureComponent {
+    constructor(props){
+        super(props);
+        this.webSocket = null;
+        this.state = { error: null, message: null, isOpen: false}
+
+        this.connect = this.connect.bind(this);
+        this.onOpen = this.onOpen.bind(this);
+        this.onClose = this.onClose.bind(this);
+        this.onMessage = this.onMessage.bind(this);
+        this.onError = this.onError.bind(this);
+    }
+
+    connect (lobbyId) {
+        if (this.webSocket == null || !this.state.isOpen) {
+            this.webSocket = new WebSocket(`ws://${Env.serverAddress}:${Env.serverPort}/${lobbyId}`)
+            this.webSocket.onopen = this.onOpen
+            this.webSocket.onclose = this.onClose
+            this.webSocket.onmessage = this.onMessage
+            this.webSocket.onerror = this.onError
+        }
+    }
+
+    disconnect () {
+        if (this.webSocket != null && this.state.isOpen) {
+            this.webSocket.close();
+        }
+    }
+
+    onOpen (event) {
+        this.setState({ isOpen: true })
+    }
+
+    onClose (event) {
+        this.setState({ isOpen: false })
+    }
+
+    onError (error) {
+        this.setState({ error })
+    }
+
+    onMessage (message) {
+        this.setState({ message })
+    }
+
+    render () {
+        const { children } = this.props;
+
+        const childrenState = { 
+            message: this.state.message, 
+            error: this.state.error, 
+            connect: this.connect, 
+            disconnect: this.disconnect 
+        }
+
+        const childrenWithProps = React.Children.map(children, child =>
+            React.cloneElement(child, childrenState));
+
+        return (
+            <div>{childrenWithProps}</div>
+        )
     }
 }
 
-class JoinForm extends React.Component {
+
+class JoinForm extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = { nick: '', password: '' };
@@ -17,6 +76,7 @@ class JoinForm extends React.Component {
         this.handleChangeNick = this.handleChangeNick.bind(this);
         this.handleChangePassword = this.handleChangePassword.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.doLogin = this.doLogin.bind(this);
     }
 
     handleChangeNick(event) {
@@ -26,11 +86,32 @@ class JoinForm extends React.Component {
     handleChangePassword(event) {
         this.setState({ password: event.target.value });
     }
+    
+    async doLogin () {
+        try {
+            const options = {
+                method: "POST",
+                body: JSON.stringify({ password: this.state.password })
+            }
+            const response = await fetch(`http://${Env.serverAddress}:${Env.serverPort}/lobby-enter`, options)
+            return JSON.parse(response).lobby
+        } catch(e) {
+            console.log(e);
+            return false;
+        }
+    }
 
-    handleSubmit(event) {
-        // TODO: Join a game.
-        alert(`Information was submitted: ${this.state.nick} and ${this.state.password}`);
+    async handleSubmit(event) {
         event.preventDefault();
+        try { 
+            const lobby = await this.doLogin();
+            if(lobby) {
+                this.props.connect(lobby);
+                // TODO if connection succeeded we need to send a SET NICK websocket event
+            }
+        } catch(e) {
+            console.log(e);
+        }
     }
 
     render() {
@@ -63,15 +144,26 @@ function Greeting() {
     </p>
 }
 
-function JoinScreen() {
+function JoinScreen(props) {
     return <div>
         <Header />
         <Greeting />
-        <JoinForm />
+        <JoinForm {...props}/>
     </div>
 }
 
+function getCurrentScreen() {
+    //TODO navigate to other screen when some condition changed
+    return <JoinScreen />
+}
+
+const App = () => (
+    <Communication>
+        { getCurrentScreen() }
+    </Communication>
+)
+
 ReactDOM.render(
-    <JoinScreen />,
+    <App />,
     document.getElementById('root')
 );
