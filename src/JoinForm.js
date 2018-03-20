@@ -4,7 +4,7 @@ import Env from './Env';
 export class JoinForm extends React.PureComponent {
     constructor(props) {
         super(props);
-        this.state = { nick: '', password: '' };
+        this.state = { nick: '', password: '', nickSet: 0};
 
         this.handleChangeNick = this.handleChangeNick.bind(this);
         this.handleChangePassword = this.handleChangePassword.bind(this);
@@ -50,6 +50,19 @@ export class JoinForm extends React.PureComponent {
             }
         } catch (e) {
             console.log(e);
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.isConnected && this.state.nickSet === 0) {
+            this.props.send({
+                action: 2,
+                payload: this.state.nick
+            })
+            this.setState({ nickSet: 1 })
+        } else if(this.state.nickSet === 1 &&
+                    nextProps.message.action === "3") {
+            this.setState({ nickSet: 2 })
         }
     }
 
