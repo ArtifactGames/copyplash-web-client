@@ -1,5 +1,5 @@
 import React from 'react';
-import Env from './Env';
+import Env from './config/Env';
 
 class Communication extends React.PureComponent {
     constructor(props) {

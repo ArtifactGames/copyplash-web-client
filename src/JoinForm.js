@@ -1,5 +1,5 @@
 import React from 'react';
-import Env from './Env';
+import Env from './config/Env';
 
 export class JoinForm extends React.PureComponent {
     constructor(props) {
