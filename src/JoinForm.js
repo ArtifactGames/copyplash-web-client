@@ -1,5 +1,6 @@
 import React from 'react';
-import Env from './Env';
+import Env from './config/Env';
+import ActionCodes from './config/ActionCodes'
 
 export class JoinForm extends React.PureComponent {
     constructor(props) {
@@ -56,12 +57,12 @@ export class JoinForm extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         if(nextProps.isConnected && this.state.nickSet === 0) {
             this.props.send({
-                action: 2,
+                action: ActionCodes.SET_NICK,
                 payload: this.state.nick
             })
             this.setState({ nickSet: 1 })
         } else if(this.state.nickSet === 1 &&
-                    nextProps.message.action === "3") {
+                    parseInt(nextProps.message.action, 10) === ActionCodes.SET_NICK_SUCCESS ) {
             this.setState({ nickSet: 2 })
         }
     }
