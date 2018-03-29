@@ -1,6 +1,6 @@
 const Env = {
     serverAddress: "localhost",
-    serverPort: "8081"
+    serverPort: "8080"
 }
 
 export default Env;
