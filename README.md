@@ -19,7 +19,11 @@ npm install
 ```
 
 ## Quick-launching
-By default this will create an instance will be running on [localhost:8000](localhost:8000).
+By default this will create an instance will be running on [localhost:3000](localhost:3000).
+To be able to actually use this app on MacOS you have to run this command:
+open -n -a Google\ Chrome --args --disable-web-security --user-data-dir=/tmp/chrome
+
+This way, the CORS security check of Chrome will be disabled, and you won’t need to stop all other instances since this command runs a new one
 
 ```bash
 # Launches the project
