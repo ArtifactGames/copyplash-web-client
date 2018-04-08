@@ -1,6 +1,6 @@
 import React from 'react';
-import Communication from './Communication';
-import JoinScreen from './JoinForm';
+import Communication from './component/Communication';
+import JoinScreen from './screen/Join';
 import './App.css';
 
 function getCurrentScreen() {
