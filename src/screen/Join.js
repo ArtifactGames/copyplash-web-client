@@ -1,6 +1,6 @@
 import React from 'react';
 import ActionCodes from '../config/ActionCodes'
-import { Header, Loading }from '../component'
+import { Loading }from '../component'
 import doLogin from '../datasource/doLogin'
 
 
@@ -18,10 +18,6 @@ const LoginForm = ({ nick, password, handleSubmit, handleChangeNick, handleChang
     <br />
     <input type="submit" value="Join Game" />
   </form>
-)
-
-const UserLogged = ({ nick }) => (
-  <h1>{nick}</h1>
 )
 
 export class Index extends React.PureComponent {
@@ -63,7 +59,7 @@ export class Index extends React.PureComponent {
             this.setState({ nickSet: 1 })
         } else if(this.state.nickSet === 1 &&
                     parseInt(nextProps.message.action, 10) === ActionCodes.SET_NICK_SUCCESS ) {
-            this.setState({ nickSet: 2 })
+          this.props.nextState({ nick: this.state.nick });
         }
     }
     
@@ -71,8 +67,6 @@ export class Index extends React.PureComponent {
         switch(this.state.nickSet) {
             case 1:
                 return <Loading/>
-            case 2:
-                return <UserLogged nick={this.state.nick}/>
             default:
                 return <LoginForm
                     nick={this.state.nick}
@@ -94,10 +88,9 @@ function Greeting() {
 
 function Join(props) {
     return <div>
-        <Header />
         <Greeting />
         <Index {...props} />
     </div>
 }
 
-export default Join;
+export { Join };
