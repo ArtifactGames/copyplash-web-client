@@ -59,7 +59,7 @@ export class Index extends React.PureComponent {
             this.setState({ nickSet: 1 })
         } else if(this.state.nickSet === 1 &&
                     parseInt(nextProps.message.action, 10) === ActionCodes.SET_NICK_SUCCESS ) {
-            this.setState({ nickSet: 2 })
+          this.props.nextState({ nick: this.state.nick });
         }
     }
     

@@ -75,4 +75,4 @@ class Communication extends React.PureComponent {
     }
 }
 
-export default Communication;
+export { Communication };
