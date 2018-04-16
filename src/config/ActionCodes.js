@@ -1,4 +1,6 @@
 export default {
     SET_NICK: 10000,
     SET_NICK_SUCCESS: 10001,
+    LAUNCH_ROUND: 10002,
+    ROUND_FINISH_PLAYER: 1003,
 }
