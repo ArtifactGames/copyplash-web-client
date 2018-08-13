@@ -1,4 +1,4 @@
-# Copyplash!
+# (Abandoned) Copyplash!
 A web application to play Copyplash. Built with [create-react-app](https://github.com/facebook/create-react-app). 
 
 Connects to [copyplash-web-service](https://github.com/ArtifactGames/copyplash-web-service) to join a game started by [copyplash-game](https://github.com/ArtifactGames/copyplash-game).
